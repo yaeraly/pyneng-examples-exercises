@@ -13,3 +13,13 @@
 
 mac = ['aabb:cc80:7000', 'aabb:dd80:7340', 'aabb:ee80:7000', 'aabb:ff80:7000']
 
+mac_cisco = [ m.replace(':', '.') for m in mac ]
+print(mac_cisco)
+
+mac_c = []
+i = 0
+while len(mac) != i :
+    mac_c.append(mac[i].replace(':', '.'))
+    i += 1
+print(mac_c)
+
