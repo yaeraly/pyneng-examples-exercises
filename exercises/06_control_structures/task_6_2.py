@@ -14,3 +14,17 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+ip_address = input('Enter IP address in a format (10.10.10.1): ')
+ip = int(ip_address.split('.')[0])
+
+if 1 <= ip <= 223:
+    print(f"\nThe {ip_address} is an unicast")
+elif 224 <= ip <= 239:
+    print(f"\nThe {ip_address} is a multicast")
+elif ip_address == '255.255.255.255':
+    print(f"\nThe {ip_address} is a local broadcast")
+elif ip_address == '0.0.0.0':
+    print(f"\nThe {ip_address} is an unassigned")
+else:
+    print(f"\nThe {ip_address} is an unused")
+
