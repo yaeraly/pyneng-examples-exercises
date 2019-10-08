@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from sys import argv
+
 '''
 Задание 7.2
 
@@ -12,3 +14,9 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+
+with open(argv[1]) as f:
+    for line in f:
+        if not line.startswith('!'):
+            print(line.rstrip())
+
