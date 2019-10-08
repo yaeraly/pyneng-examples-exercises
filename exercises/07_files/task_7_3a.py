@@ -22,3 +22,15 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+lists = []
+
+with open('CAM_table.txt') as f:
+    for line in f:
+        if 'DYNAMIC' in line:
+            vlan, mac, _, intf = line.split()
+            lists.append([ int(vlan), mac, intf ])
+
+lists.sort()
+for vlan, mac, intf in lists:
+    print(f'{vlan:<7}    {mac}   {intf:>7}')
+
