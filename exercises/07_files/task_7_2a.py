@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from sys import argv
+
 '''
 Задание 7.2a
 
@@ -13,3 +15,16 @@
 '''
 
 ignore = ['duplex', 'alias', 'Current configuration']
+
+with open(argv[1]) as f:
+    for line in f:
+        if not line.startswith('!'):
+            word_in_line = False
+            for word in ignore:
+                if word in line:
+                    word_in_line = True
+                    break
+
+            if not word_in_line:
+                print(line.rstrip())
+
