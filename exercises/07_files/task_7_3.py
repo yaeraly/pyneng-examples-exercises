@@ -17,3 +17,10 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+
+with open('CAM_table.txt') as f:
+    for line in f:
+        if 'DYNAMIC' in line:
+            vlan, mac, _, intf = line.split()
+            print(f'{vlan:<7}    {mac}   {intf:>7}')
+

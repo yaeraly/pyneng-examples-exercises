@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from sys import argv
 '''
 Задание 7.2c
 
@@ -17,3 +18,15 @@
 '''
 
 ignore = ['duplex', 'alias', 'Current configuration']
+
+with open(argv[1]) as src, open(argv[2], 'w') as dst:
+    for line in src:
+        word_in_line = False
+        for word in ignore:
+            if word in line:
+                word_in_line = True
+                break
+
+        if not word_in_line:
+            dst.write(line)
+
