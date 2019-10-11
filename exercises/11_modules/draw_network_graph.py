@@ -25,7 +25,7 @@ styles = {
         'color': '#006699',
         'style': 'filled',
         'fillcolor': '#006699',
-        'margin': '0.1',
+        'margin': '0.3',
     },
     'edges': {
         'style': 'dashed',

@@ -1,15 +1,15 @@
 graph {
 	graph [bgcolor="#333333" fontcolor=white fontsize=16 label="Network Map" rankdir=BT]
-	node [color="#006699" fillcolor="#006699" fontcolor=white fontname=Helvetica margin=0.1 shape=box style=filled]
+	node [color="#006699" fillcolor="#006699" fontcolor=white fontname=Helvetica margin=0.3 shape=box style=filled]
 	edge [arrowhead=open color=green fontcolor=white fontname=Courier fontsize=14 style=dashed]
 	R2
 	R5
-	R3
 	SW2
 	R1
 	SW1
-	R6
 	R4
+	R6
+	R3
 	SW1 -- R1 [label="            " headlabel="Eth0/0" taillabel="Eth0/1"]
 	SW1 -- R2 [label="            " headlabel="Eth0/0" taillabel="Eth0/2"]
 	SW1 -- R3 [label="            " headlabel="Eth0/0" taillabel="Eth0/3"]
