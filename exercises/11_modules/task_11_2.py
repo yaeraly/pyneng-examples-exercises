@@ -50,12 +50,8 @@ def create_network_map(filenames):
     for filename in filenames:
         with open(filename) as f:
 
-            file_dict = parse_cdp_neighbors(f.read())
-
-            for key, value in file_dict.items():
-                if value in result_dict.keys():
-                    continue
-                else:
+            for key, value in parse_cdp_neighbors(f.read()).items():
+                if not value in result_dict.keys():
                     result_dict.update({key: value})
 
     return result_dict
