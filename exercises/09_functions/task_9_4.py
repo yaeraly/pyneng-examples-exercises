@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from pprint import pprint
 '''
 Задание 9.4
 
@@ -53,5 +52,5 @@ def convert_config_to_dict(config_filename):
 
     return config_dict
 
-pprint(convert_config_to_dict('config_sw1.txt'))
+print(convert_config_to_dict('config_sw1.txt'))
 
