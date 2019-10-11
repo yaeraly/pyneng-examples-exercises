@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
 '''
 Задание 11.1
 
@@ -27,4 +28,21 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+
+def parse_cdp_neighbors(command_output):
+    result_dict = {}
+
+    for line in command_output.split('\n'):
+
+        if '>' in line:
+            l_device = line.split('>')[0]
+        elif '/' in line:
+            r_device, l_intf_t, l_intf_n, *others, r_intf_t, r_intf_n = line.split()
+            result_dict[(l_device, l_intf_t + l_intf_n)] = (r_device, r_intf_t + r_intf_n)
+
+    return result_dict
+
+if __name__ == "__main__":
+    with open("sh_cdp_n_sw1.txt") as f:
+        pprint(parse_cdp_neighbors(f.read()))
 
