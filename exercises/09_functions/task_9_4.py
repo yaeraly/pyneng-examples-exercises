@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
 '''
 Задание 9.4
 
@@ -35,3 +36,22 @@ def ignore_command(command, ignore):
     * False - если нет
     '''
     return any(word in command for word in ignore)
+
+
+def convert_config_to_dict(config_filename):
+    config_dict = {}
+    with open(config_filename) as f:
+        for line in f:
+            line = line.rstrip()
+            if line.startswith('!') or ignore_command(line, ignore) or line == "":
+                continue
+            elif line.split(' ')[0]:
+                key = line
+                config_dict[key] = []
+            elif not line.split(' ')[0]:
+                config_dict[key].append(line.strip())
+
+    return config_dict
+
+pprint(convert_config_to_dict('config_sw1.txt'))
+
