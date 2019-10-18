@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+from pprint import pprint
 '''
 Задание 15.2
 
@@ -21,3 +23,16 @@
 Проверить работу функции на примере файла sh_ip_int_br.txt.
 
 '''
+def parse_sh_ip_int_br(filename):
+    regex = re.compile('(?P<intf>\S+) +(?P<ip>\S+) +\S+ +\S+ +(?P<status>up|\S+ \S+) +(?P<protocol>up|down)')
+    conf_list = []
+    with open(filename) as f:
+        for line in f:
+            match = regex.search(line)
+            if match:
+                conf_list.append(match.groups())
+    return conf_list
+
+if __name__ == '__main__':
+    pprint(parse_sh_ip_int_br('sh_ip_int_br.txt'))
+
