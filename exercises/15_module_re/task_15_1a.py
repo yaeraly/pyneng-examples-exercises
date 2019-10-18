@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+from pprint import pprint
 '''
 Задание 15.1a
 
@@ -22,3 +24,22 @@
 диапазоны адресов и так далее, так как обрабатывается вывод команды, а не ввод пользователя.
 
 '''
+
+def get_ip_from_cfg(filename):
+    regex = re.compile(r'interface (?P<intf>\S+)'
+                       r'| +\S+ +\S+ +(?P<ip>\d+\.\d+\.\d+\.\d+) (?P<mask>\d+\.\d+\.\d+\.\d+)')
+
+    ip_dict = {}
+    with open(filename) as f:
+        for line in f:
+            match = regex.search(line)
+            if match:
+                if match.lastgroup == 'intf':
+                    intf = match.group(match.lastgroup)
+                else:
+                    ip_dict[intf] = match.group('ip', 'mask')
+
+    return ip_dict
+
+pprint(get_ip_from_cfg('config_r1.txt'))
+
