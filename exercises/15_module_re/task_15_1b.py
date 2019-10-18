@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+from pprint import pprint
 '''
 Задание 15.1b
 
@@ -23,4 +25,25 @@ Ethernet0/1 соответствует список из двух кортеже
 диапазоны адресов и так далее, так как обрабатывается вывод команды, а не ввод пользователя.
 
 '''
+def get_ip_from_cfg(filename):
+    regex = ('interface (?P<intf>\S+)'
+             '| +\S+ +\S+ +(?P<ip2>\d+\.\d+\.\d+\.\d+) (?P<mask2>\d+\.\d+\.\d+\.\d+) secondary'
+             '| +\S+ +\S+ +(?P<ip1>\d+\.\d+\.\d+\.\d+) (?P<mask1>\d+\.\d+\.\d+\.\d+)')
+
+    ip_dict = {}
+    with open(filename) as f:
+        for line in f:
+            match = re.search(regex, line)
+            if match:
+                if match.lastgroup == 'intf':
+                    intf = match.group(match.lastgroup)
+                elif match.lastgroup == 'mask1':
+                    ip_dict[intf] = []
+                    ip_dict[intf].append(match.group('ip1', 'mask1'))
+                else:
+                    ip_dict[intf].append(match.group('ip2', 'mask2'))
+    return ip_dict
+
+pprint(get_ip_from_cfg('config_r2.txt'))
+
 
