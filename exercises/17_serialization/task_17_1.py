@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
+import csv
+import re
 '''
 Задание 17.1
 
@@ -38,10 +41,45 @@
 
 Кроме того, создан список заголовков (headers), который должен быть записан в CSV.
 '''
-
 import glob
 
 sh_version_files = glob.glob('sh_vers*')
 #print(sh_version_files)
 
 headers = ['hostname', 'ios', 'image', 'uptime']
+
+def parse_sh_version(file_content):
+    regex = re.compile('Cisco.+Version (?P<ios>\S+),'
+                       '|router.+is (?P<uptime>.+)'
+                       '|System image file is "(?P<image>\S+)"')
+
+    for line in file_content.split('\n'):
+        match = regex.search(line)
+        if match:
+            if match.lastgroup == 'ios':
+                ios = match.group(match.lastgroup)
+            elif match.lastgroup == 'uptime':
+                uptime = match.group(match.lastgroup)
+            else:
+                image = match.group(match.lastgroup)
+    return (ios, image, uptime)
+
+
+def write_inventory_to_csv(data_filenames, csv_filename):
+    files_content = ''
+    lists_of_lists = []
+    lists_of_lists.append(headers)
+    for file_name in data_filenames:
+        with open(file_name) as f:
+            lists = list(parse_sh_version(f.read()))
+            lists.insert(0, file_name[11:13])
+            lists_of_lists.append(lists)
+
+    with open(csv_filename, 'w') as dest:
+        writer = csv.writer(dest)
+        writer.writerows(lists_of_lists)
+
+file_names = [ 'sh_version_r1.txt', 'sh_version_r2.txt', 'sh_version_r3.txt' ]
+
+write_inventory_to_csv(file_names, 'routers_inventory.csv')
+
