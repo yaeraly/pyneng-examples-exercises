@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 '''
 Задание 15.4
 
@@ -22,4 +23,23 @@ interface Loopback0
 
 Проверить работу функции на примере файла config_r1.txt.
 '''
+
+def get_ints_without_description(filename):
+    result = []
+    regex = re.compile(r"^interface (?P<intf>\S+)|description (?P<des>\S+)")
+    intf = ''
+    with open(filename) as f:
+        for line in f:
+            match = regex.search(line)
+            if match and match.lastgroup == 'intf':
+                intf = match.group('intf')
+            elif match and match.lastgroup == 'des':
+                intf = ''
+            elif intf != '':
+                result.append(intf)
+                intf = ''
+
+    return result
+
+print(get_ints_without_description('config_r1.txt'))
 

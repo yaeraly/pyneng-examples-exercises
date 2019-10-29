@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+from pprint import pprint
 '''
 Задание 15.5
 
@@ -24,3 +26,18 @@ description Connected to SW1 port Eth 0/1
 
 Проверить работу функции на файле sh_cdp_n_sw1.txt.
 '''
+def generate_description_from_cdp(filename):
+    regex = re.compile(r'(?P<r_device>\S+) +'
+                       r'(?P<l_intf>\S+ \S+).+\d+ +'
+                       r'(?P<r_intf>\S+ \S+)')
+    result = {}
+    with open(filename) as f:
+        for line in f:
+            match = regex.search(line)
+            if match:
+               result[match.group('l_intf')] = f"description Connected to {match.group('r_device')} port {match.group('r_intf')}"
+
+    return result
+
+pprint(generate_description_from_cdp('sh_cdp_n_sw1.txt'))
+

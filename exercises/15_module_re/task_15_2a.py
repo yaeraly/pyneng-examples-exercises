@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import re
+from  task_15_2 import parse_sh_ip_int_br
+from pprint import pprint
 '''
 Задание 15.2a
 
@@ -27,3 +30,17 @@
 '''
 
 headers = ['interface', 'address', 'status', 'protocol']
+
+def convert_to_dict(headers, list_of_tuples):
+    list_dict = []
+    for value in list_of_tuples:
+        lists = list(value)
+        list_dict.append(dict(zip(headers, lists)))
+
+    return list_dict
+
+
+
+show = convert_to_dict(headers, parse_sh_ip_int_br('sh_ip_int_br.txt'))
+pprint(show)
+
