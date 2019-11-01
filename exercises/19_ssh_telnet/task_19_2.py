@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import yaml
+from netmiko import ConnectHandler
+from paramiko.ssh_exception import AuthenticationException
+from netmiko.ssh_exception import NetMikoAuthenticationException
+from netmiko.ssh_exception import NetMikoTimeoutException
 '''
 Задание 19.2
 
@@ -44,3 +49,27 @@ R1#
 commands = [
     'logging 10.255.255.1', 'logging buffered 20010', 'no logging console'
 ]
+
+
+def send_config_commands(device, config_commands):
+    results = ''
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            results = ssh.send_config_set(config_commands)
+
+    except (AuthenticationException, NetMikoAuthenticationException):
+        print('Authentication failure: unable to connect')
+    except (NetMikoTimeoutException):
+        print('Connection to device timed-out')
+
+    return results
+
+if __name__ in "__main__":
+    with open('devices.yaml') as f:
+        dict_device = yaml.safe_load(f)
+        result = send_config_commands(dict_device[0], commands)
+
+    print(result)
+
+
