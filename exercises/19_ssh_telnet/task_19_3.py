@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import yaml
+from netmiko import ConnectHandler
+from paramiko.ssh_exception import AuthenticationException
+from netmiko.ssh_exception import NetMikoAuthenticationException
+from netmiko.ssh_exception import NetMikoTimeoutException
+from task_19_1 import send_show_command
+from task_19_2 import send_config_commands
 '''
 Задание 19.3
 
@@ -35,3 +42,17 @@ commands = [
     'logging 10.255.255.1', 'logging buffered 20010', 'no logging console'
 ]
 command = 'sh ip int br'
+
+def send_commands(device, show=None, config=None):
+    r = ''
+    if show:
+        r = send_show_command(device, show)
+    elif config:
+        r = send_config_commands(device, config)
+
+    return r
+
+with open('devices.yaml') as f:
+    dict_device = yaml.safe_load(f)
+    print(send_commands(dict_device[0], config=commands))
+
