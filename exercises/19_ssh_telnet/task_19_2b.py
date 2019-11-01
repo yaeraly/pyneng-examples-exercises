@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import yaml
+from netmiko import ConnectHandler
+from paramiko.ssh_exception import AuthenticationException
+from netmiko.ssh_exception import NetMikoAuthenticationException
+from netmiko.ssh_exception import NetMikoTimeoutException
 '''
 Задание 19.2b
 
@@ -94,7 +99,45 @@ R1(config)#sh i
 '''
 
 # списки команд с ошибками и без:
-commands_with_errors = ['logging 0255.255.1', 'logging', 'sh i']
+commands_with_errors = ['logging 0255.255.1', 'logging', 'do show ru']
 correct_commands = ['logging buffered 20010', 'ip http server']
 
 commands = commands_with_errors + correct_commands
+
+def send_config_commands(device, config_commands, verbose=True):
+    results_with_errors = {}
+    correct_results = {}
+
+    try:
+        with ConnectHandler(**device) as ssh:
+            if verbose:
+                print(f'Connecting to {device["ip"]}')
+
+            for command in config_commands:
+                results = ''
+                ssh.enable()
+                results = ssh.send_config_set(command)
+                index = results.find('end')
+
+                if results.find('Invalid') > 0:
+                    print(f"""Команда "{command}" выполнилась с ошибкой "Invalid input detected at '^' marker." на устройстве {device["ip"]}""")
+                    results_with_errors.update({command: results[:index]})
+                elif results.find('Incomplete') > 0:
+                    print(f"""Команда "{command}" выполнилась с ошибкой "Incomplete command." на устройстве {device["ip"]}""")
+                    results_with_errors.update({command: results[:index]})
+                elif results.find('Ambiguous') > 0:
+                    print(f"""Команда "{command}" выполнилась с ошибкой "Ambiguous command: "{command}"" на устройстве {device["ip"]}""")
+                    results_with_errors.update({command: results[:index]})
+                else:
+                    correct_results.update({command: results[:index]})
+
+    except (AuthenticationException, NetMikoAuthenticationException):
+        print('Authentication failure: unable to connect')
+    except (NetMikoTimeoutException):
+        print('Connection to device timed-out')
+
+    return (correct_results, results_with_errors)
+
+with open('devices.yaml') as f:
+    dict_device = yaml.safe_load(f)
+    send_config_commands(dict_device[0], commands)
