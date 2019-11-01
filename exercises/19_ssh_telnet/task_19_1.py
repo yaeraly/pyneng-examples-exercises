@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import yaml
+from netmiko import ConnectHandler
 '''
 Задание 19.1
 
@@ -17,3 +19,17 @@
 '''
 
 command = 'sh ip int br'
+
+def send_show_command(device, command):
+    result = ''
+    with ConnectHandler(**device) as ssh:
+        ssh.enable()
+
+        result = ssh.send_command(command)
+
+    return result
+
+if __name__ in "__main__":
+    with open('devices.yaml') as f:
+        dict_device = yaml.safe_load(f)
+        print(send_show_command(dict_device[0], command))
