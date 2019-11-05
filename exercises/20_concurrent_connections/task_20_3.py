@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import yaml
+from netmiko import ConnectHandler, NetMikoAuthenticationException
+from concurrent.futures import ThreadPoolExecutor
 '''
 Задание 20.3
 
@@ -40,3 +43,27 @@ commands = {'192.168.100.1': 'sh ip int br',
             '192.168.100.2': 'sh arp',
             '192.168.100.3': 'sh ip int br'}
 
+
+def send_command(device, command):
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            result = f'{ssh.find_prompt()}{command}\n{ssh.send_command(command)}'
+
+            return result
+    except(NetMikoAuthenticationException) as err:
+        print("Invalid username or password")
+
+
+def send_command_to_devices(devices, commands_dict, filename, limit=3):
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        results = executor.map(send_command, devices, commands_dict.values())
+
+    with open(filename, 'w') as dst:
+        dst.write('\n'.join(results))
+
+if __name__ in "__main__":
+    with open('devices.yaml') as f:
+        devices = yaml.safe_load(f)
+
+    send_command_to_devices(devices, commands, 'task_20_2.txt')
