@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import yaml
+from itertools import repeat
+from netmiko import ConnectHandler, NetMikoAuthenticationException
+from concurrent.futures import ThreadPoolExecutor
+
 '''
 Задание 20.2
 
@@ -33,3 +38,29 @@ Ethernet0/1                unassigned      YES NVRAM  administratively down down
 
 Проверить работу функции на устройствах из файла devices.yaml
 '''
+
+
+def send_command(device, command):
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            result = f'{ssh.find_prompt()}{command}\n{ssh.send_command(command)}'
+
+            return result
+    except(NetMikoAuthenticationException) as err:
+        print("Invalid username or password")
+
+
+def send_show_command_to_devices(devices, command, filename, limit=3):
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        results = executor.map(send_command, devices, repeat(command))
+
+    with open(filename, 'w') as dst:
+        dst.write('\n'.join(results))
+
+if __name__ in "__main__":
+    with open('devices.yaml') as f:
+        devices = yaml.safe_load(f)
+
+    send_show_command_to_devices(devices, 'sh ip int br', 'task_20_2.txt')
+
