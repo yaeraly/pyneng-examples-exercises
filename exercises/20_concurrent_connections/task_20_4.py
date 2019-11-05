@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import yaml
+from itertools import repeat
+from netmiko import ConnectHandler, NetMikoAuthenticationException
+from concurrent.futures import ThreadPoolExecutor
 '''
 Задание 20.4
 
@@ -82,3 +86,33 @@ R3#
 
 Для выполнения задания можно создавать любые дополнительные функции.
 '''
+
+def send_command(device, command):
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            if command['show']:
+                result = f'{ssh.find_prompt()}{command["show"]}\n{ssh.send_command(command["show"])}'
+            else:
+                result = ssh.send_config_set(command['config'])
+
+            return result
+    except(NetMikoAuthenticationException) as err:
+        print("Invalid username or password")
+
+
+def send_commands_to_devices(devices, filename, show=None, config=None, limit=3):
+    command = {'show': show, 'config': config}
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        results = executor.map(send_command, devices, repeat(command))
+
+
+    with open(filename, 'w') as dst:
+        dst.write('\n'.join(results))
+
+if __name__ in "__main__":
+    with open('devices.yaml') as f:
+        devices = yaml.safe_load(f)
+
+    send_commands_to_devices(devices, config=['router ospf 55', 'network 0.0.0.0 255.255.255.255 area 0'], filename = 'result.txt')
+
