@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
+from pprint import pprint
+from jinja2 import Environment, FileSystemLoader
 '''
 Задание 21.5
 
@@ -25,11 +28,36 @@ cisco_vpn_1.txt и cisco_vpn_2.txt.
 cisco_vpn_1.txt и cisco_vpn_2.txt.
 '''
 
-data = {
+
+def create_vpn_config(template1, template2, data_dict):
+    template_dir, template_file1 = os.path.split(template1)
+    template_dir, template_file2 = os.path.split(template2)
+
+    env = Environment(loader=FileSystemLoader(template_dir))
+
+    temp1 = env.get_template(template_file1)
+    temp2 = env.get_template(template_file2)
+
+    vpn1_conf = temp1.render(data_dict)
+    vpn2_conf = temp2.render(data_dict)
+
+    return (vpn1_conf, vpn2_conf)
+
+
+if __name__ in "__main__":
+    data = {
     'tun_num': 10,
     'wan_ip_1': '192.168.100.1',
     'wan_ip_2': '192.168.100.2',
     'tun_ip_1': '10.0.1.1 255.255.255.252',
     'tun_ip_2': '10.0.1.2 255.255.255.252'
-}
+    }
 
+    template1 = 'templates/gre_ipsec_vpn_1.txt'
+    template2 = 'templates/gre_ipsec_vpn_2.txt'
+
+    cfg1, cfg2 = create_vpn_config(template1, template2, data)
+
+    print(cfg1)
+    print('-'*65)
+    print(cfg2)
